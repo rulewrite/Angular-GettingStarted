@@ -11,7 +11,19 @@ export class ProductListComponent implements OnInit {
   imageWidth = 50;
   imageMargin = 2;
   showImage = false;
-  listFilter = 'cart';
+
+  _listFilter: string;
+  get listFilter(): string {
+    return this._listFilter;
+  }
+  set listFilter(value: string) {
+    this._listFilter = value;
+    this.filteredProducts = this.listFilter
+      ? this.performFilter(this.listFilter)
+      : this.products;
+  }
+
+  filteredProducts: Product[];
   products: Product[] = [
     {
       productId: 1,
@@ -34,6 +46,18 @@ export class ProductListComponent implements OnInit {
       imageUrl: 'assets/images/garden_cart.png',
     },
   ];
+
+  constructor() {
+    this.filteredProducts = this.products;
+    this.listFilter = 'cart';
+  }
+
+  performFilter(filterBy: string): Product[] {
+    const toLowerCasedFilterBy = filterBy.toLocaleLowerCase();
+    return this.products.filter((product) =>
+      product.productName.toLocaleLowerCase().includes(toLowerCasedFilterBy)
+    );
+  }
 
   toggleImage(): void {
     this.showImage = !this.showImage;
